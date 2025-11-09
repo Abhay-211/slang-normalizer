@@ -18,7 +18,7 @@ def load_data_and_model():
     with st.spinner("Loading slang dictionary from local folder..."):
         try:
             # 1. Define the path to the CSV (changed here)
-            csv_file_path = os.path.join('strea', 'abbreviations.csv')
+            csv_file_path = os.path.join('abbreviations.csv')
             
             if not os.path.exists(csv_file_path):
                 st.error(f"Error: Could not find `abbreviations.csv` at the path: {csv_file_path}")
@@ -212,3 +212,4 @@ if st.session_state.slang_dict:
 
 else:
     st.error("Could not load the slang dictionary. Please check your 'strea/abbreviations.csv' path.")
+

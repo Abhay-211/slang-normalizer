@@ -8,12 +8,12 @@ import time
 @st.cache_data(ttl=3600)
 def load_data_and_model():
     """
-    Loads slang dictionary from 'strea/abbreviations.csv',
+    Loads slang dictionary from 'abbreviations.csv',
     cleans it, and returns slang→meaning dictionary.
     """
     with st.spinner("Loading and preparing slang dictionary..."):
         try:
-            csv_file_path = os.path.join('strea', 'abbreviations.csv')
+            csv_file_path = os.path.join('abbreviations.csv')
 
             if not os.path.exists(csv_file_path):
                 st.error(f"Error: Could not find `abbreviations.csv` in {csv_file_path}")
@@ -236,3 +236,4 @@ if st.session_state.slang_dict:
 
 else:
     st.error("❌ Could not load slang dictionary. Check the file path: 'strea/abbreviations.csv'")
+

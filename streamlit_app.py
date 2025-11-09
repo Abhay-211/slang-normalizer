@@ -99,31 +99,58 @@ if st.session_state.slang_dict:
     ])
 
     # --- TAB 1: NORMALIZER ---
-    with tab1:
-        st.header("Live Slang Normalizer")
-        st.markdown("Type a sentence on the left and see the normalized output on the right.")
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            user_input = st.text_area(
-                "Enter Slang Text:", 
-                placeholder="e.g., wyd lol, that's gr8. ttyl!", 
-                height=200, 
-                label_visibility="collapsed"
+with tab1:
+    st.header("Live Slang Normalizer")
+    st.markdown("Type a sentence on the left and see the normalized output on the right.")
+    
+    # Apply custom CSS for dark theme boxes
+    st.markdown("""
+        <style>
+        .dark-box {
+            height: 200px;
+            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background-color: #000;
+            color: #00ffcc;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            overflow-y: auto;
+        }
+        textarea {
+            background-color: #000 !important;
+            color: #00ffcc !important;
+            border: 1px solid #333 !important;
+            border-radius: 10px !important;
+            font-family: 'Courier New', monospace !important;
+            font-size: 16px !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        user_input = st.text_area(
+            "Enter Slang Text:", 
+            placeholder="e.g., wyd lol, that's gr8. ttyl!", 
+            height=200, 
+            label_visibility="collapsed"
+        )
+    
+    with col2:
+        if user_input:
+            normalized_text = normalize_slang(user_input, st.session_state.slang_dict)
+            st.markdown(
+                f"<div class='dark-box'><strong>{normalized_text}</strong></div>", 
+                unsafe_allow_html=True
             )
-        
-        with col2:
-            if user_input:
-                normalized_text = normalize_slang(user_input, st.session_state.slang_dict)
-                st.markdown(
-                    f"<div style='height: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;'><strong>{normalized_text}</strong></div>", 
-                    unsafe_allow_html=True
-                )
-            else:
-                st.markdown(
-                    "<div style='height: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; color: #888;'>Your translation will appear here.</div>", 
-                    unsafe_allow_html=True
-                )
+        else:
+            st.markdown(
+                "<div class='dark-box' style='color:#666;'>Your translation will appear here.</div>", 
+                unsafe_allow_html=True
+            )
+
 
     # --- TAB 2: DATA EXPLORATION ---
     with tab2:
@@ -212,4 +239,5 @@ if st.session_state.slang_dict:
 
 else:
     st.error("Could not load the slang dictionary. Please check your 'strea/abbreviations.csv' path.")
+
 

@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import os
-import zipfile
 import string
 import time
 
@@ -9,12 +8,12 @@ import time
 @st.cache_data(ttl=3600)
 def load_data_and_model():
     """
-    Loads the slang dictionary from a local folder 'strea/abbreviations.csv',
-    cleans it, and returns a dictionary mapping slang → meaning.
+    Loads slang dictionary from 'strea/abbreviations.csv',
+    cleans it, and returns slang→meaning dictionary.
     """
     with st.spinner("Loading and preparing slang dictionary..."):
         try:
-            csv_file_path = os.path.join( 'abbreviations.csv')
+            csv_file_path = os.path.join('strea', 'abbreviations.csv')
 
             if not os.path.exists(csv_file_path):
                 st.error(f"Error: Could not find `abbreviations.csv` in {csv_file_path}")
@@ -78,6 +77,9 @@ st.markdown("Decode and normalize social media slang instantly using AI-powered 
 if 'slang_dict' not in st.session_state:
     st.session_state.slang_dict = load_data_and_model()
 
+if 'normalized_text' not in st.session_state:
+    st.session_state.normalized_text = ""
+
 # --- 5. CUSTOM CSS ---
 st.markdown("""
     <style>
@@ -122,7 +124,8 @@ if st.session_state.slang_dict:
     # --- TAB 1: NORMALIZER ---
     with tab1:
         st.header("Live Slang Normalizer")
-        st.markdown("Type a sentence on the left and see the normalized output on the right.")
+        st.markdown("Type a sentence and click **Normalize Text** to translate slang.")
+
         col1, col2 = st.columns(2)
 
         with col1:
@@ -132,11 +135,17 @@ if st.session_state.slang_dict:
                 height=200,
                 label_visibility="collapsed"
             )
+            normalize_btn = st.button("Normalize Text 🚀")
+
+            if normalize_btn:
+                if not user_input.strip():
+                    st.warning("Please enter some text to normalize.")
+                else:
+                    st.session_state.normalized_text = normalize_slang(user_input, st.session_state.slang_dict)
 
         with col2:
-            if user_input:
-                normalized_text = normalize_slang(user_input, st.session_state.slang_dict)
-                st.markdown(f"<div class='dark-box'><strong>{normalized_text}</strong></div>", unsafe_allow_html=True)
+            if st.session_state.normalized_text:
+                st.markdown(f"<div class='dark-box'><strong>{st.session_state.normalized_text}</strong></div>", unsafe_allow_html=True)
             else:
                 st.markdown("<div class='dark-box' style='color:#666;'>Your translation will appear here.</div>", unsafe_allow_html=True)
 
@@ -186,12 +195,12 @@ if st.session_state.slang_dict:
         st.header("About This Project 💡")
         st.markdown("""
         **SlangDecoder** is an AI-inspired Streamlit app that translates internet slang into normal English.  
-        It replicates the workflow of your original *Social Media Slang Normalization Notebook*, including:
-        - 📦 **Data ingestion** from a curated slang dataset
-        - 🧹 **Cleaning & preprocessing** for accurate mapping
-        - 🧠 **Model creation** — slang-to-meaning dictionary
-        - 🗣️ **Real-time normalization** powered by Streamlit
-        - 🎨 **Interactive visuals** for better understanding
+        It replicates your original *Social Media Slang Normalization Notebook*, including:
+        - 📦 **Data ingestion** from a curated slang dataset  
+        - 🧹 **Cleaning & preprocessing** for accurate mapping  
+        - 🧠 **Model creation** — slang-to-meaning dictionary  
+        - 🗣️ **Real-time normalization** powered by Streamlit  
+        - 🎨 **Interactive visuals** for insights  
         """)
         st.info("This project demonstrates how text preprocessing and dataset cleaning can be visualized interactively in Streamlit.")
 
